@@ -7,18 +7,18 @@
  */
 export const calculateRecipeCost = (recipeMaterials, materials) => {
   return recipeMaterials.reduce((total, recipeMaterial) => {
-    // Buscar el material actual y recalcular con precio actualizado
+    // Si el ingrediente tiene un costo guardado, usarlo directamente
+    if (recipeMaterial.costo_ingrediente !== undefined && recipeMaterial.costo_ingrediente !== null) {
+      return total + (parseFloat(recipeMaterial.costo_ingrediente) || 0)
+    }
+    
+    // Fallback: calcular con precios actuales si no hay costo guardado
     const material = materials.find(m => m.id === recipeMaterial.material_id)
     if (material) {
       const cantidadPresentacion = parseFloat(material.cantidad_presentacion) || 1
-      const unitCost = material.precio / cantidadPresentacion
-      const materialCost = recipeMaterial.cantidad * unitCost
+      const unitCost = parseFloat(material.precio) / cantidadPresentacion
+      const materialCost = parseFloat(recipeMaterial.cantidad) * unitCost
       return total + (isFinite(materialCost) ? materialCost : 0)
-    }
-    
-    // Si no encuentra el material pero tiene costo guardado, usarlo como fallback
-    if (recipeMaterial.costo_ingrediente !== undefined && recipeMaterial.costo_ingrediente !== null) {
-      return total + (parseFloat(recipeMaterial.costo_ingrediente) || 0)
     }
     
     return total
@@ -36,10 +36,10 @@ export const getIngredientsWithCosts = (recipeMaterials, materials) => {
     const material = materials.find(m => m.id === recipeMaterial.material_id)
     if (material) {
       const cantidadPresentacion = parseFloat(material.cantidad_presentacion) || 1
-      const unitCost = material.precio / cantidadPresentacion
+      const unitCost = parseFloat(material.precio) / cantidadPresentacion
       
       // Siempre recalcular con el precio actual del material
-      const materialCost = recipeMaterial.cantidad * unitCost
+      const materialCost = parseFloat(recipeMaterial.cantidad) * unitCost
       
       return {
         ...recipeMaterial,

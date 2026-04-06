@@ -11,6 +11,7 @@ export function Settings() {
   const [formData, setFormData] = useState(config)
   const [costData, setCostData] = useState(configCosts)
   const [success, setSuccess] = useState('')
+  const [saving, setSaving] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -44,10 +45,14 @@ export function Settings() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    setSaving(true)
     setConfig(formData)
     setConfigCosts(costData)
     setSuccess(translate('configurationSaved'))
-    setTimeout(() => setSuccess(''), 3000)
+    setTimeout(() => {
+      setSuccess('')
+      setSaving(false)
+    }, 3000)
   }
 
   const languages = [
@@ -331,8 +336,8 @@ export function Settings() {
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="btn btn-primary btn-large">
-            {translate('updateConfig')}
+          <button type="submit" className="btn btn-primary btn-large" disabled={saving}>
+            {saving ? translate('saving') || 'Guardando...' : translate('updateConfig')}
           </button>
         </div>
       </form>
