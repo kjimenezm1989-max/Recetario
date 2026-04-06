@@ -1,0 +1,60 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.app-main {
+  flex: 1;
+  background-color: var(--crema);
+  padding: var(--spacing-lg);
+  overflow-y: auto;
+  max-width: 100%;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gris-claro);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rosa-pastel);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #F39AD1;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-color: var(--rosa-pastel) var(--gris-claro);
+  scrollbar-width: thin;
+}
+
+/* Móviles pequeños (<480px) */
+@media (max-width: 479px) {
+  .app-main {
+    padding: var(--spacing-md);
+  }
+}
+
+/* Tablets (480px - 768px) */
+@media (min-width: 480px) and (max-width: 768px) {
+  .app-main {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* Desktop (>768px) */
+@media (min-width: 769px) {
+  .app-main {
+    padding: var(--spacing-lg);
+  }
+}

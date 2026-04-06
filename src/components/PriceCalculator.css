@@ -1,0 +1,214 @@
+.price-calculator {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xl);
+  box-shadow: var(--box-shadow);
+}
+
+.price-calculator h3 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-lg);
+  color: var(--chocolate);
+}
+
+.recipe-selection {
+  background-color: var(--beige);
+  padding: var(--spacing-lg);
+  border-radius: 6px;
+  margin-bottom: var(--spacing-lg);
+  border-left: 4px solid var(--rosa-pastel);
+}
+
+.selected-recipe {
+  margin: 0;
+  color: var(--chocolate);
+  font-weight: 500;
+}
+
+.calculator-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.calculator-inputs .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.calculator-inputs label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: var(--chocolate);
+  font-size: var(--font-size-small);
+}
+
+.value-display {
+  background-color: var(--rosa-pastel);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: 4px;
+  font-weight: 700;
+  min-width: 50px;
+  text-align: center;
+}
+
+.slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--beige), var(--rosa-pastel));
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--rosa-pastel);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: var(--transition);
+}
+
+.slider::-webkit-slider-thumb:hover {
+  background: #F39AD1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--rosa-pastel);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: none;
+  transition: var(--transition);
+}
+
+.slider::-moz-range-thumb:hover {
+  background: #F39AD1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+.number-input {
+  padding: var(--spacing-md);
+  border: 2px solid var(--beige);
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--chocolate);
+}
+
+.number-input:focus {
+  outline: none;
+  border-color: var(--rosa-pastel);
+}
+
+.price-calculator > .btn {
+  width: 100%;
+  margin-bottom: var(--spacing-xl);
+}
+
+.calculation-results {
+  background: linear-gradient(135deg, #FFF8F2 0%, #FFFBF7 100%);
+  border-radius: 6px;
+  padding: var(--spacing-xl);
+  border: 2px solid var(--beige);
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  background: white;
+  border-radius: 6px;
+  border-left: 4px solid var(--beige);
+}
+
+.result-item.final-price {
+  background: linear-gradient(135deg, var(--verde-menta) 0%, #E5F3ED 100%);
+  border-left-color: var(--verde-menta);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-lg) 0;
+}
+
+.result-label {
+  font-weight: 600;
+  color: var(--chocolate);
+  font-size: var(--font-size-base);
+}
+
+.result-value {
+  font-weight: 700;
+  color: var(--rosa-pastel);
+  font-size: var(--font-size-large);
+}
+
+.result-item.final-price .result-value {
+  color: var(--chocolate);
+  font-size: 24px;
+}
+
+.result-summary {
+  background: white;
+  padding: var(--spacing-lg);
+  border-radius: 6px;
+  text-align: center;
+  border-top: 2px solid var(--rosa-pastel);
+}
+
+.result-summary p {
+  margin: 0;
+  color: var(--chocolate);
+  font-size: var(--font-size-base);
+}
+
+.result-summary strong {
+  color: var(--rosa-pastel);
+  font-size: var(--font-size-large);
+}
+
+@media (max-width: 768px) {
+  .price-calculator {
+    padding: var(--spacing-lg);
+  }
+
+  .calculator-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .calculator-inputs label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .value-display {
+    align-self: flex-start;
+  }
+
+  .result-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .result-value {
+    width: 100%;
+    text-align: right;
+  }
+}
