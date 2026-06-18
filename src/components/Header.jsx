@@ -15,7 +15,7 @@ export function Header() {
           <h1 className="header-title">{config.nombre_negocio}</h1>
         </div>
         <div className="header-subtitle">
-          SweetCost Studio
+          SweetCost Suite
         </div>
       </div>
     </header>

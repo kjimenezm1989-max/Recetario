@@ -10,7 +10,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'SweetCost Studio',
+        name: 'SweetCost Suite',
         short_name: 'SweetCost',
         description: 'Gestión inteligente de recetas, costos y cotizaciones',
         theme_color: '#F5B7C5',
