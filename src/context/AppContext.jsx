@@ -3,6 +3,7 @@ import { storage } from '../utils/storage'
 import { t } from '../utils/i18n'
 import { applyTheme } from '../utils/themes'
 import { licenseService } from '../utils/license'
+import { calculateIngredientCost } from '../utils/unitConversion'
 
 const AppContext = createContext()
 
@@ -146,6 +147,35 @@ export const AppProvider = ({ children }) => {
     return recipeMaterials.filter(rm => rm.recipe_id === recipeId)
   }
 
+  const refreshRecipeCosts = () => {
+    setRecipeMaterials(prev => prev.map(rm => {
+      const material = materials.find(m => m.id === rm.material_id)
+      if (!material) return rm
+
+      const cantidadPresentacion = parseFloat(material.cantidad_presentacion) || 1
+      const presentacionString = `${cantidadPresentacion}${material.presentacion}`
+      let newCost = 0
+
+      if (rm.cantidad_valor && rm.unidad_medida) {
+        newCost = calculateIngredientCost(
+          parseFloat(material.precio),
+          presentacionString,
+          parseFloat(rm.cantidad_valor),
+          rm.unidad_medida
+        )
+      } else {
+        const unitCost = parseFloat(material.precio) / cantidadPresentacion
+        const materialCost = parseFloat(rm.cantidad) * unitCost
+        newCost = isFinite(materialCost) ? materialCost : 0
+      }
+
+      return {
+        ...rm,
+        costo_ingrediente: newCost
+      }
+    }))
+  }
+
   // Quote operations
   const addQuote = (quote) => {
     const newQuote = { 
@@ -202,13 +232,14 @@ export const AppProvider = ({ children }) => {
 
     // License
     licenseStatus,
-    activateLicense: (code) => {
-      const result = licenseService.activateLicense(code)
+    activateLicense: async (code) => {
+      const result = await licenseService.activateLicense(code)
       if (result.success) {
         setLicenseStatus(licenseService.getStatus())
       }
       return result
     },
+    refreshRecipeCosts,
     isPaid: licenseService.isPaid,
     canAddMaterials: () => licenseService.isPaid() || materials.length < 10,
     canAddRecipes: () => licenseService.isPaid() || recipes.length < 2,

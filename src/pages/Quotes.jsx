@@ -25,12 +25,16 @@ export function Quotes() {
     return () => window.removeEventListener('keydown', handleKeyPress)
   }, [showForm])
 
-  const filteredQuotes = quotes.filter(quote =>
-    (quote.cliente && quote.cliente.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (quotes.find(q => q.id === quote.id)?.recipe_id ? 
-      recipes.find(r => r.id === quote.recipe_id)?.nombre.toLowerCase().includes(searchTerm.toLowerCase()) 
-      : false)
-  )
+  const filteredQuotes = quotes.filter(quote => {
+    const searchLower = searchTerm.toLowerCase()
+    const matchesClient = quote.cliente && quote.cliente.toLowerCase().includes(searchLower)
+    const quoteRecipeIds = quote.recipe_ids || (quote.recipe_id ? [quote.recipe_id] : [])
+    const matchesRecipe = quoteRecipeIds.some(recipeId => {
+      const recipe = recipes.find(r => r.id === recipeId)
+      return recipe?.nombre?.toLowerCase().includes(searchLower)
+    })
+    return matchesClient || matchesRecipe
+  })
 
   const handleAddQuote = (quote) => {
     addQuote(quote)
@@ -60,9 +64,14 @@ export function Quotes() {
 
   const editingQuote = quotes.find(q => q.id === editingId)
 
-  const getRecipeName = (recipeId) => {
-    const recipe = recipes.find(r => r.id === recipeId)
-    return recipe ? recipe.nombre : 'Sin receta'
+  const getRecipeNames = (recipeIds) => {
+    const ids = recipeIds || ([])
+    const names = ids
+      .map(id => recipes.find(r => r.id === id))
+      .filter(Boolean)
+      .map(recipe => recipe.nombre)
+
+    return names.length > 0 ? names.join(', ') : 'Sin receta'
   }
 
   return (
@@ -119,13 +128,17 @@ export function Quotes() {
       ) : (
         <div className="quotes-grid">
           {filteredQuotes.map(quote => {
-            const recipe = recipes.find(r => r.id === quote.recipe_id)
+            const quoteRecipeIds = quote.recipe_ids || (quote.recipe_id ? [quote.recipe_id] : [])
+            const quoteRecipes = quoteRecipeIds
+              .map(id => recipes.find(r => r.id === id))
+              .filter(Boolean)
+            const firstRecipe = quoteRecipes[0]
             
             return (
             <div key={quote.id} className="quote-card">
-              {recipe?.imagen && (
+              {firstRecipe?.imagen && (
                 <div className="quote-image-section">
-                  <img src={recipe.imagen} alt={recipe?.nombre} className="quote-image" />
+                  <img src={firstRecipe.imagen} alt={firstRecipe?.nombre} className="quote-image" />
                 </div>
               )}
               
@@ -135,24 +148,28 @@ export function Quotes() {
                 <div className="quote-details">
                   <div className="detail-row">
                     <span className="label">{translate('selectRecipe')}:</span>
-                    <span className="value">{getRecipeName(quote.recipe_id)}</span>
+                    <span className="value">{getRecipeNames(quoteRecipeIds)}</span>
                   </div>
                   
-                  <div className="detail-row">
-                    <span className="label">{translate('date')}:</span>
-                    <span className="value">{new Date(quote.fecha).toLocaleDateString()}</span>
-                  </div>
-                  
-                  {recipe?.tiene_obsequio && (
+                  {quoteRecipes.some(recipe => recipe.tiene_obsequio) && (
                     <div className="detail-row gift-row">
                       <span className="label">🎁 {translate('hasGift')}:</span>
-                      <span className="value">{recipe?.nombre_obsequio || 'Obsequio especial'}</span>
+                      <span className="value">
+                        {quoteRecipes
+                          .filter(recipe => recipe.tiene_obsequio)
+                          .map(recipe => recipe.nombre_obsequio || 'Obsequio especial')
+                          .join(', ')}
+                      </span>
                     </div>
                   )}
-                  
-                  {recipe?.tiene_obsequio && recipe?.imagen_obsequio && (
+
+                  {quoteRecipes.some(recipe => recipe.tiene_obsequio && recipe.imagen_obsequio) && (
                     <div className="gift-image-container">
-                      <img src={recipe.imagen_obsequio} alt={recipe.nombre_obsequio} className="gift-image" />
+                      {quoteRecipes
+                        .filter(recipe => recipe.tiene_obsequio && recipe.imagen_obsequio)
+                        .map(recipe => (
+                          <img key={recipe.id} src={recipe.imagen_obsequio} alt={recipe.nombre_obsequio} className="gift-image" />
+                        ))}
                     </div>
                   )}
                   
@@ -173,7 +190,7 @@ export function Quotes() {
                 </button>
                 <button
                   className="btn btn-small btn-success"
-                  onClick={() => generateQuotePDF(quote, recipe, config, formatCurrency)}
+                  onClick={() => generateQuotePDF(quote, quoteRecipes, config, formatCurrency)}
                   title="Descargar cotización en PDF"
                 >
                   📥 PDF

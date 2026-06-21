@@ -19,6 +19,15 @@
   min-width: 200px;
 }
 
+.refresh-message {
+  color: var(--verde-oscuro);
+  font-size: 0.95rem;
+  background: var(--gris-claro);
+  border-radius: 12px;
+  padding: 0.35rem 0.75rem;
+  white-space: nowrap;
+}
+
 .form-section {
   background: white;
   border-radius: var(--border-radius);

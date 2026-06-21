@@ -6,10 +6,11 @@ import { RecipeForm } from '../components/RecipeForm'
 import './Recipes.css'
 
 export function Recipes() {
-  const { translate, config, recipes, recipeMaterials, materials, addRecipe, updateRecipe, deleteRecipe, addMultipleRecipeMaterials, deleteRecipeMaterial, canAddRecipes } = useAppContext()
+  const { translate, config, recipes, recipeMaterials, materials, addRecipe, updateRecipe, deleteRecipe, addMultipleRecipeMaterials, deleteRecipeMaterial, canAddRecipes, refreshRecipeCosts } = useAppContext()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [refreshMessage, setRefreshMessage] = useState('')
 
   // Keyboard shortcut: Alt+R to add recipe
   useEffect(() => {
@@ -102,7 +103,7 @@ export function Recipes() {
     <div className="recipes-container">
       <div className="section-header">
         <h2>{translate('recipes')}</h2>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
           {!canAddRecipes() && !editingId && (
             <span className="license-warning">
               Límite excedido - Require licencia
@@ -119,6 +120,21 @@ export function Recipes() {
           >
             {translate('add')} {translate('recipes')}
           </button>
+          <button
+            className="btn btn-secondary"
+            onClick={() => {
+              refreshRecipeCosts()
+              setRefreshMessage('Totales actualizados según precios actuales de materiales')
+              setTimeout(() => setRefreshMessage(''), 3000)
+            }}
+            disabled={recipes.length === 0}
+            title="Actualizar costo de recetas con precios actuales de materiales"
+          >
+            Actualizar totales
+          </button>
+          {refreshMessage && (
+            <span className="refresh-message">{refreshMessage}</span>
+          )}
         </div>
       </div>
 

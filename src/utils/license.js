@@ -1,18 +1,47 @@
 /**
  * Sistema de gestión de licencias para Recetario
  * - 15 días de prueba gratis
- * - Licencia pagada con código
+ * - Licencia pagada con número válido en Licencias.csv
  * - Limitaciones sin licencia válida
  */
 
 const LICENSE_KEY = 'recetario_license'
 const INSTALL_DATE_KEY = 'recetario_install_date'
 const TRIAL_DAYS = 15
+const LICENSE_CSV_URL = `${import.meta.env.BASE_URL || '/'}Licencias.csv`
 
-// Códigos de licencia válidos (administrador los gestiona)
-const VALID_LICENSE_CODES = {
-  'RECETARIO-2026-PRO': { type: 'lifetime', name: 'Licencia PRO Permanente' },
-  'RECETARIO-ANNUAL-2026': { type: 'annual', name: 'Licencia Anual', expiryDate: new Date('2027-04-06') }
+let cachedLicenseNumbers = null
+
+const loadLicenseNumbers = async () => {
+  if (cachedLicenseNumbers) return cachedLicenseNumbers
+
+  try {
+    const response = await fetch(LICENSE_CSV_URL)
+    if (!response.ok) {
+      throw new Error('No se pudo cargar el archivo de licencias')
+    }
+
+    const text = await response.text()
+    const lines = text
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+
+    const numbers = new Set()
+    lines.forEach(line => {
+      const delimiter = line.includes(';') ? ';' : ','
+      const firstValue = line.split(delimiter)[0]?.trim()
+      if (/^\d+$/.test(firstValue)) {
+        numbers.add(firstValue)
+      }
+    })
+
+    cachedLicenseNumbers = numbers
+    return numbers
+  } catch (error) {
+    cachedLicenseNumbers = new Set()
+    return cachedLicenseNumbers
+  }
 }
 
 export const licenseService = {
@@ -50,31 +79,30 @@ export const licenseService = {
   },
 
   /**
-   * Activar licencia con código
+   * Activar licencia con código comparando el primer valor numérico contra Licencias.csv
    */
-  activateLicense: (code) => {
-    code = code.trim().toUpperCase()
-    
-    if (!VALID_LICENSE_CODES[code]) {
-      return { success: false, message: 'Código de licencia inválido' }
+  activateLicense: async (code) => {
+    code = code.trim()
+
+    if (!code || !/^\d+$/.test(code)) {
+      return { success: false, message: 'Licencia no válida' }
     }
 
-    const license = VALID_LICENSE_CODES[code]
-    
-    // Verificar expiración si es aplicable
-    if (license.expiryDate && new Date() > license.expiryDate) {
-      return { success: false, message: 'Código de licencia expirado' }
+    const licenseNumbers = await loadLicenseNumbers()
+    if (!licenseNumbers.has(code)) {
+      return { success: false, message: 'Licencia no válida' }
     }
 
-    localStorage.setItem(LICENSE_KEY, JSON.stringify({
-      code,
-      type: license.type,
-      name: license.name,
+    const license = {
+      type: 'premium',
+      name: 'Servicio Premium',
       activatedDate: new Date().toISOString(),
-      expiryDate: license.expiryDate?.toISOString() || null
-    }))
+      code
+    }
 
-    return { success: true, message: 'Licencia activada correctamente', license }
+    localStorage.setItem(LICENSE_KEY, JSON.stringify(license))
+
+    return { success: true, message: 'Bienvenido al servicio Premium', license }
   },
 
   /**

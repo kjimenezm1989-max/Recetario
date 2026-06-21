@@ -6,7 +6,7 @@ export function LicenseManager({ status, onActivate }) {
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleActivate = (e) => {
+  const handleActivate = async (e) => {
     e.preventDefault()
     if (!licenseCode.trim()) {
       setMessage('Por favor ingresa un código de licencia')
@@ -14,18 +14,15 @@ export function LicenseManager({ status, onActivate }) {
     }
 
     setLoading(true)
-    // Simular pequeño delay de validación
-    setTimeout(() => {
-      const result = onActivate(licenseCode.trim())
-      if (result.success) {
-        setMessage(result.message)
-        setLicenseCode('')
-        setTimeout(() => setMessage(''), 3000)
-      } else {
-        setMessage(result.message)
-      }
-      setLoading(false)
-    }, 500)
+    const result = await onActivate(licenseCode.trim())
+    if (result.success) {
+      setMessage(result.message)
+      setLicenseCode('')
+      setTimeout(() => setMessage(''), 3000)
+    } else {
+      setMessage(result.message)
+    }
+    setLoading(false)
   }
 
   return (

@@ -48,7 +48,7 @@ export function Settings() {
     setSaving(true)
     setConfig(formData)
     setConfigCosts(costData)
-    setSuccess(translate('configurationSaved'))
+    setSuccess('Cambios efectuados con éxito')
     setTimeout(() => {
       setSuccess('')
       setSaving(false)
