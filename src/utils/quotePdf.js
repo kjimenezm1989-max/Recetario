@@ -95,6 +95,16 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
         </div>
       </div>
 
+      <div style="background-color: #FFF4E6; padding: 5mm 6mm 6mm; border-radius: 4px; margin-bottom: 5mm; font-size: 10px; border: 1px solid #F5B7C5;">
+        <p style="margin: 0; font-weight: 700; color: #4A2C2A; font-size: 11px;">Válido por 7 días</p>
+      </div>
+
+      <div style="background-color: #FFF4E6; padding: 6mm; border-radius: 5px; border: 1px solid #F5B7C5; margin-bottom: 5mm; font-size: 10px;">
+        <p style="margin: 0 0 4px 0; font-weight: 700; color: #4A2C2A;">Condiciones de pago:</p>
+        <p style="margin: 0 0 4px 0;">50% de anticipo para apartar el pedido y 50% contra entrega.</p>
+        <p style="margin: 0;">Recuerda confirmar 3 días antes: Fecha, hora y lugar de entrega a nuestro WhatsApp: <strong>310 742 0071 o 311 408 7428</strong>.</p>
+      </div>
+
       <!-- Footer Message -->
       <div style="background-color: #FFF4E6; padding: 5mm; border-radius: 3px; text-align: center; margin-bottom: 4mm; font-size: 9px;">
         <p style="color: #4A2C2A; margin: 0; font-weight: bold;">¡Gracias por elegirnos!</p>
@@ -119,7 +129,9 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
             <span style="display: inline-block; margin: 0 3mm;">
               💬 <strong>WhatsApp:</strong> ${config.whatsapp}
             </span>
-          ` : ''}        
+          ` : ''}
+        </div>
+      </div>
     </div>
   `
 
