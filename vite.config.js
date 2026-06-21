@@ -12,8 +12,10 @@ export default defineConfig(({ command }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
+        injectRegister: 'auto',
+        manifestFilename: 'manifest.webmanifest',
         strategies: 'generateSW',
-        includeAssets: ['Favicon.png', 'apple-touch-icon.png', 'masked-icon.svg'],
+        includeAssets: ['Favicon.png', 'apple-touch-icon.png', 'masked-icon.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
         manifest: {
           name: 'Recetario',
           short_name: 'Recetario',
@@ -51,7 +53,9 @@ export default defineConfig(({ command }) => {
         workbox: {
           globPatterns: ['**/*.{js,css,html,png,svg,ico,json,webmanifest}'],
           navigateFallback: `${base}index.html`,
-          cleanupOutdatedCaches: true
+          cleanupOutdatedCaches: true,
+          skipWaiting: true,
+          clientsClaim: true
         },
         devOptions: {
           enabled: false

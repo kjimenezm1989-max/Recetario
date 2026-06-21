@@ -16,40 +16,30 @@ export const useAppContext = () => {
 }
 
 export const AppProvider = ({ children }) => {
-  const [config, setConfig] = useState({
-    nombre_negocio: 'Mi Repostería',
-    descripcion_negocio: 'Transforma tus ideas en deliciosas creaciones',
-    nombre_administrador: '',
-    logo: null,
-    idioma: 'es',
-    moneda: 'USD',
-    simbolo_moneda: '$',
-    tema: 'classico',
-    instagram: '',
-    facebook: '',
-    whatsapp: ''
+  const [config, setConfig] = useState(() => {
+    return storage.getAppConfig() || {
+      nombre_negocio: 'Mi Repostería',
+      descripcion_negocio: 'Transforma tus ideas en deliciosas creaciones',
+      nombre_administrador: '',
+      logo: null,
+      idioma: 'es',
+      moneda: 'USD',
+      simbolo_moneda: '$',
+      tema: 'classico',
+      instagram: '',
+      facebook: '',
+      whatsapp: ''
+    }
   })
 
-  const [materials, setMaterials] = useState([])
-  const [recipes, setRecipes] = useState([])
-  const [recipeMaterials, setRecipeMaterials] = useState([])
-  const [configCosts, setConfigCosts] = useState({ ganancia: 20, gastos: 5, empaque: 3 })
-  const [quotes, setQuotes] = useState([])
+  const [materials, setMaterials] = useState(() => storage.getMaterials())
+  const [recipes, setRecipes] = useState(() => storage.getRecipes())
+  const [recipeMaterials, setRecipeMaterials] = useState(() => storage.getRecipeMaterials())
+  const [configCosts, setConfigCosts] = useState(() => storage.getConfigCosts())
+  const [quotes, setQuotes] = useState(() => storage.getQuotes())
   const [licenseStatus, setLicenseStatus] = useState(licenseService.getStatus())
 
-  // Load data from localStorage on mount
-  useEffect(() => {
-    const savedConfig = storage.getAppConfig()
-    if (savedConfig) {
-      setConfig(savedConfig)
-    }
-    
-    setMaterials(storage.getMaterials())
-    setRecipes(storage.getRecipes())
-    setRecipeMaterials(storage.getRecipeMaterials())
-    setConfigCosts(storage.getConfigCosts())
-    setQuotes(storage.getQuotes())
-  }, [])
+
 
   // Save config to localStorage whenever it changes
   useEffect(() => {

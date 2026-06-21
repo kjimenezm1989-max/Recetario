@@ -8,10 +8,18 @@ const STORAGE_KEYS = {
 }
 
 export const storage = {
+  parseJson: (value, fallback) => {
+    try {
+      return value ? JSON.parse(value) : fallback
+    } catch (error) {
+      console.warn('storage: invalid JSON for localStorage key', error)
+      return fallback
+    }
+  },
   // App Config
   getAppConfig: () => {
     const data = localStorage.getItem(STORAGE_KEYS.APP_CONFIG)
-    return data ? JSON.parse(data) : null
+    return storage.parseJson(data, null)
   },
   setAppConfig: (config) => {
     localStorage.setItem(STORAGE_KEYS.APP_CONFIG, JSON.stringify(config))
@@ -20,7 +28,7 @@ export const storage = {
   // Materials
   getMaterials: () => {
     const data = localStorage.getItem(STORAGE_KEYS.MATERIALS)
-    return data ? JSON.parse(data) : []
+    return storage.parseJson(data, [])
   },
   setMaterials: (materials) => {
     localStorage.setItem(STORAGE_KEYS.MATERIALS, JSON.stringify(materials))
@@ -47,7 +55,7 @@ export const storage = {
   // Recipes
   getRecipes: () => {
     const data = localStorage.getItem(STORAGE_KEYS.RECIPES)
-    return data ? JSON.parse(data) : []
+    return storage.parseJson(data, [])
   },
   setRecipes: (recipes) => {
     localStorage.setItem(STORAGE_KEYS.RECIPES, JSON.stringify(recipes))
@@ -74,7 +82,7 @@ export const storage = {
   // Recipe Materials
   getRecipeMaterials: () => {
     const data = localStorage.getItem(STORAGE_KEYS.RECIPE_MATERIALS)
-    return data ? JSON.parse(data) : []
+    return storage.parseJson(data, [])
   },
   setRecipeMaterials: (recipeMaterials) => {
     localStorage.setItem(STORAGE_KEYS.RECIPE_MATERIALS, JSON.stringify(recipeMaterials))
@@ -97,7 +105,7 @@ export const storage = {
   // Config Costs
   getConfigCosts: () => {
     const data = localStorage.getItem(STORAGE_KEYS.CONFIG_COSTS)
-    return data ? JSON.parse(data) : { ganancia: 0, gastos: 0, empaque: 0 }
+    return storage.parseJson(data, { ganancia: 20, gastos: 5, empaque: 3 })
   },
   setConfigCosts: (config) => {
     localStorage.setItem(STORAGE_KEYS.CONFIG_COSTS, JSON.stringify(config))
@@ -106,7 +114,7 @@ export const storage = {
   // Quotes
   getQuotes: () => {
     const data = localStorage.getItem(STORAGE_KEYS.QUOTES)
-    return data ? JSON.parse(data) : []
+    return storage.parseJson(data, [])
   },
   setQuotes: (quotes) => {
     localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(quotes))

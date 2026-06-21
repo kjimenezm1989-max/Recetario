@@ -1,5 +1,7 @@
 import html2pdf from 'html2pdf.js'
 
+const BASE_URL = import.meta.env.BASE_URL || '/'
+
 export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrency) => {
   const today = new Date()
   const quoteDate = new Date(quote.fecha)
@@ -62,17 +64,17 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
         <p style="margin: 0 0 5px 0; font-weight: 700; color: #4A2C2A;">Métodos de pago</p>
         <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: space-between;">
           <div style="flex: 1 1 30%; min-width: 65px; padding: 4px; border-radius: 6px; background: white; border: 1px solid #DDD; text-align: center;">
-            <img src="/payment-logos/daviplata.jpg" style="width: 100%; max-height: 26px; object-fit: contain; margin-bottom: 3px;" alt="Daviplata" />
+            <img src="${BASE_URL}payment-logos/daviplata.jpg" style="width: 100%; max-height: 26px; object-fit: contain; margin-bottom: 3px;" alt="Daviplata" />
             <div style="font-size: 8.5px; font-weight: 700;">Daviplata</div>
             <div style="font-size: 8px; color: #555; line-height: 1.2;">3107420071</div>
           </div>
           <div style="flex: 1 1 30%; min-width: 65px; padding: 4px; border-radius: 6px; background: white; border: 1px solid #DDD; text-align: center;">
-            <img src="/payment-logos/breb.jpg" style="width: 100%; max-height: 26px; object-fit: contain; margin-bottom: 3px;" alt="Bre-B" />
+            <img src="${BASE_URL}payment-logos/breb.jpg" style="width: 100%; max-height: 26px; object-fit: contain; margin-bottom: 3px;" alt="Bre-B" />
             <div style="font-size: 8.5px; font-weight: 700;">Bre-B</div>
             <div style="font-size: 8px; color: #555; line-height: 1.2;">3107420071</div>
           </div>
           <div style="flex: 1 1 30%; min-width: 65px; padding: 4px; border-radius: 6px; background: white; border: 1px solid #DDD; text-align: center;">
-            <img src="/payment-logos/nequi.jpg" style="width: 100%; max-height: 26px; object-fit: contain; margin-bottom: 3px;" alt="Nequi" />
+            <img src="${BASE_URL}payment-logos/nequi.jpg" style="width: 100%; max-height: 26px; object-fit: contain; margin-bottom: 3px;" alt="Nequi" />
             <div style="font-size: 8.5px; font-weight: 700;">Nequi</div>
             <div style="font-size: 8px; color: #555; line-height: 1.2;">3107420071</div>
           </div>
