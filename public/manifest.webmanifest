@@ -1,0 +1,28 @@
+{
+  "name": "Recetario",
+  "short_name": "Recetario",
+  "description": "Recetario - Gestión inteligente de recetas y cotizaciones",
+  "theme_color": "#4CAF50",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/Recetario/",
+  "start_url": "/Recetario/",
+  "icons": [
+    {
+      "src": "pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

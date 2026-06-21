@@ -2,43 +2,67 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
-  base: '/Recetario/',
-  plugins: [
-    react(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
-      manifest: {
-        name: 'SweetCost Suite',
-        short_name: 'SweetCost',
-        description: 'Gestión inteligente de recetas, costos y cotizaciones',
-        theme_color: '#F5B7C5',
-        background_color: '#ffffff',
-        display: 'standalone',
-        scope: '/Recetario/',
-        start_url: '/Recetario/',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any'
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any'
-          }
-        ]
-      }
-    })
-  ],
-  server: {
-    port: 3000,
-    host: '0.0.0.0',
-    open: false,
-    strictPort: false
+export default defineConfig(({ command }) => {
+  const isBuild = command === 'build'
+  const base = isBuild ? '/Recetario/' : '/'
+
+  return {
+    base,
+    plugins: [
+      react(),
+      VitePWA({
+        registerType: 'autoUpdate',
+        strategies: 'generateSW',
+        includeAssets: ['Favicon.png', 'apple-touch-icon.png', 'masked-icon.svg'],
+        manifest: {
+          name: 'Recetario',
+          short_name: 'Recetario',
+          description: 'Recetario - Gestión inteligente de recetas y cotizaciones',
+          theme_color: '#4CAF50',
+          background_color: '#ffffff',
+          display: 'standalone',
+          orientation: 'portrait',
+          scope: base,
+          start_url: base,
+          icons: [
+            {
+              src: 'pwa-192x192.png',
+              sizes: '192x192',
+              type: 'image/png'
+            },
+            {
+              src: 'pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png'
+            },
+            {
+              src: 'apple-touch-icon.png',
+              sizes: '180x180',
+              type: 'image/png'
+            },
+            {
+              src: 'masked-icon.svg',
+              sizes: 'any',
+              type: 'image/svg+xml',
+              purpose: 'maskable'
+            }
+          ]
+        },
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,png,svg,ico,json,webmanifest}'],
+          navigateFallback: `${base}index.html`,
+          cleanupOutdatedCaches: true
+        },
+        devOptions: {
+          enabled: false
+        }
+      })
+    ],
+    server: {
+      port: 3000,
+      host: '0.0.0.0',
+      open: false,
+      strictPort: false
+    }
   }
 })
