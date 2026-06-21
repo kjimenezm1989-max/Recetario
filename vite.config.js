@@ -20,7 +20,7 @@ export default defineConfig(({ command }) => {
           name: 'Recetario',
           short_name: 'Recetario',
           description: 'Recetario - Gestión inteligente de recetas y cotizaciones',
-          theme_color: '#4CAF50',
+          theme_color: '#FDCAE1',
           background_color: '#ffffff',
           display: 'standalone',
           orientation: 'portrait',
