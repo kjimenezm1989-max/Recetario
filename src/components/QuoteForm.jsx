@@ -6,7 +6,7 @@ import { calculateIngredientCost } from '../utils/unitConversion'
 import './QuoteForm.css'
 
 export function QuoteForm({ quote, onSubmit, onCancel }) {
-  const { translate, config, recipes, materials, configCosts, getRecipeMaterialsByRecipeId, canCreateQuotes } = useAppContext()
+  const { translate, config, recipes, materials, configCosts, getRecipeMaterialsByRecipeId, canCreateQuotes, canUploadImages } = useAppContext()
 
   const [formData, setFormData] = useState(quote ? {
     recipe_ids: quote.recipe_ids || (quote.recipe_id ? [quote.recipe_id] : []),
@@ -16,7 +16,8 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
     gastos: quote.gastos ?? (configCosts?.gastos || 5),
     empaque: quote.empaque ?? (configCosts?.empaque || 3),
     precio_final: quote.precio_final || '',
-    nota: quote.nota || ''
+    nota: quote.nota || '',
+    imagen_referencia: quote.imagen_referencia || null
   } : {
     recipe_ids: [],
     extraMaterials: [],
@@ -25,7 +26,8 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
     gastos: configCosts?.gastos || 5,
     empaque: configCosts?.empaque || 3,
     precio_final: '',
-    nota: ''
+    nota: '',
+    imagen_referencia: null
   })
 
   const [recipeSearch, setRecipeSearch] = useState('')
@@ -93,6 +95,20 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }))
     }
+  }
+
+  const handleReferenceImageChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      setFormData(prev => ({
+        ...prev,
+        imagen_referencia: event.target?.result || null
+      }))
+    }
+    reader.readAsDataURL(file)
   }
 
   const handleRecipeSelect = (recipeId, recipeName) => {
@@ -188,6 +204,7 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
       empaque: formData.empaque,
       precio_final: parseFloat(formData.precio_final),
       nota: formData.nota,
+      imagen_referencia: formData.imagen_referencia || null,
       fecha: quote?.fecha || new Date().toISOString()
     }
 
@@ -200,7 +217,8 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
       gastos: configCosts?.gastos || 5,
       empaque: configCosts?.empaque || 3,
       precio_final: '',
-      nota: ''
+      nota: '',
+      imagen_referencia: null
     })
     setSelectedRecipes([])
     setExtraMaterials([])
@@ -434,6 +452,29 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
             onChange={handleChange}
             placeholder={translate('notes')}
           />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="imagen_referencia">{translate('referenceImage')}</label>
+          <input
+            type="file"
+            id="imagen_referencia"
+            accept="image/*"
+            onChange={handleReferenceImageChange}
+            disabled={!canUploadImages()}
+          />
+          {formData.imagen_referencia && (
+            <div className="reference-image-preview">
+              <img src={formData.imagen_referencia} alt="Referencia del cliente" />
+              <button
+                type="button"
+                className="btn btn-small btn-danger"
+                onClick={() => setFormData(prev => ({ ...prev, imagen_referencia: null }))}
+              >
+                {translate('delete')}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="form-actions">

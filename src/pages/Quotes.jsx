@@ -136,9 +136,20 @@ export function Quotes() {
             
             return (
             <div key={quote.id} className="quote-card">
-              {firstRecipe?.imagen && (
+              {(firstRecipe?.imagen || quote.imagen_referencia) && (
                 <div className="quote-image-section">
-                  <img src={firstRecipe.imagen} alt={firstRecipe?.nombre} className="quote-image" />
+                  <div className="quote-images-row">
+                    {firstRecipe?.imagen && (
+                      <div className="quote-image-card">
+                        <img src={firstRecipe.imagen} alt={firstRecipe?.nombre} className="quote-image" />
+                      </div>
+                    )}
+                    {quote.imagen_referencia && (
+                      <div className="quote-image-card">
+                        <img src={quote.imagen_referencia} alt="Referencia del cliente" className="quote-image" />
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
               

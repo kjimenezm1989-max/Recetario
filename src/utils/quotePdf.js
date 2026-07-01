@@ -39,12 +39,20 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
       </div>
 
       <!-- Recipe Info with Images -->
-      <div style="margin-bottom: 5mm; display: flex; gap: 5mm; flex-wrap: wrap;">
-        ${firstRecipe && firstRecipe.imagen ? `
+      ${firstRecipe?.imagen || quote.imagen_referencia ? `
+      <div style="margin-bottom: 5mm; display: flex; gap: 3.5mm; flex-wrap: wrap; align-items: flex-start;">
+        <div style="display: flex; gap: 3mm; flex-wrap: wrap; flex-shrink: 0;">
+          ${firstRecipe && firstRecipe.imagen ? `
             <div style="flex-shrink: 0;">
-              <img src="${firstRecipe.imagen}" style="width: 55mm; height: 55mm; object-fit: cover; border-radius: 3px; border: 1px solid #ddd;" />
+              <img src="${firstRecipe.imagen}" style="width: 34mm; height: 34mm; object-fit: cover; border-radius: 3px; border: 1px solid #ddd;" />
             </div>
-        ` : ''}
+          ` : ''}
+          ${quote.imagen_referencia ? `
+            <div style="flex-shrink: 0;">
+              <img src="${quote.imagen_referencia}" style="width: 34mm; height: 34mm; object-fit: cover; border-radius: 3px; border: 1px solid #ddd;" />
+            </div>
+          ` : ''}
+        </div>
         <div style="flex: 1; min-width: 0; background-color: #F5F5F5; padding: 4mm; border-left: 3px solid #F5B7C5; border-radius: 3px; font-size: 9px;">
           <p style="margin: 0 0 2mm 0;"><strong>Recetas:</strong> ${recipeList.length > 0 ? recipeList.join(', ') : 'No especificado'}</p>
           ${quote.extraMaterials && quote.extraMaterials.length > 0 ? `
@@ -52,6 +60,8 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
           ` : ''}
         </div>
       </div>
+
+      ` : ''}
 
       ${quote.nota ? `
       <div style="background-color: #FFF8E6; padding: 5mm; border-radius: 3px; margin-bottom: 5mm; font-size: 10px; border: 1px solid #F5B7C5;">
@@ -83,7 +93,7 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
 
       <div style="background-color: #FFF4E6; padding: 6mm; border-radius: 5px; border: 1px solid #F5B7C5; margin-bottom: 5mm; font-size: 10px;">
         <p style="margin: 0 0 4px 0; font-weight: 700; color: #4A2C2A;">Condiciones de pago:</p>
-        <p style="margin: 0 0 4px 0;">50% de anticipo para apartar el pedido y 50% contra entrega, Válido por 7 días.</p>
+        <p style="margin: 0 0 4px 0;">50% de anticipo para apartar el pedido y 50% contra entrega, Válido por 7 días 💕🎂🧁.</p>
         <p style="margin: 0;">Recuerda confirmar 3 días antes: Fecha, hora y lugar de entrega a nuestro WhatsApp: <strong>310 742 0071 o 311 408 7428</strong>.</p>
       </div>
 
@@ -101,7 +111,7 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
 
       <div style="background-color: #FFF4E6; padding: 6mm; border-radius: 5px; border: 1px solid #F5B7C5; margin-bottom: 5mm; font-size: 10px;">
         <p style="margin: 0 0 4px 0; font-weight: 700; color: #4A2C2A;">Condiciones de pago:</p>
-        <p style="margin: 0 0 4px 0;">50% de anticipo para apartar el pedido y 50% contra entrega, Válido por 7 días.</p>
+        <p style="margin: 0 0 4px 0;">50% de anticipo para apartar el pedido y 50% contra entrega, Válido por 7 días 💕🎂🧁.</p>
         <p style="margin: 0;">Recuerda confirmar 3 días antes: Fecha, hora y lugar de entrega a nuestro WhatsApp: <strong>310 742 0071 o 311 408 7428</strong>.</p>
       </div>
 
