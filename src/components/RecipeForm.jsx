@@ -28,11 +28,13 @@ export function RecipeForm({ recipe, onSubmit, onCancel }) {
 
   // Load existing ingredients if editing
   useEffect(() => {
-    if (recipe) {
-      const existing = getRecipeMaterialsByRecipeId(recipe.id)
+    if (recipe?.id) {
+      const existing = recipeMaterials.filter(rm => rm.recipe_id === recipe.id)
       setIngredients(existing)
+    } else {
+      setIngredients([])
     }
-  }, [recipe, getRecipeMaterialsByRecipeId])
+  }, [recipe?.id, recipeMaterials])
 
   // Calculate total cost whenever ingredients change
   useEffect(() => {
