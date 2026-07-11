@@ -73,18 +73,18 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
       <div style="background-color: #F7F7F7; padding: 4mm; border-radius: 6px; margin-bottom: 4mm; font-size: 9px; border: 1px solid #DDD;">
         <p style="margin: 0 0 5px 0; font-weight: 700; color: #4A2C2A;">Métodos de pago</p>
         <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: space-between;">
-          <div style="flex: 1 1 30%; min-width: 65px; padding: 4px; border-radius: 6px; background: white; border: 1px solid #DDD; text-align: center;">
-            <img src="${BASE_URL}payment-logos/daviplata.jpg" style="width: 100%; max-height: 26px; object-fit: contain; margin-bottom: 3px;" alt="Daviplata" />
+          <div style="flex: 1 1 30%; min-width: 65px; padding: 4px; border-radius: 6px; background: white; border: 1px solid #DDD; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+            <img src="${BASE_URL}payment-logos/daviplata.jpg" style="display: block; width: auto; max-width: 100%; height: auto; max-height: 26px; object-fit: contain; margin: 0 auto 3px auto;" alt="Daviplata" />
             <div style="font-size: 8.5px; font-weight: 700;">Daviplata</div>
             <div style="font-size: 8px; color: #555; line-height: 1.2;">3107420071</div>
           </div>
-          <div style="flex: 1 1 30%; min-width: 65px; padding: 4px; border-radius: 6px; background: white; border: 1px solid #DDD; text-align: center;">
-            <img src="${BASE_URL}payment-logos/breb.jpg" style="width: 100%; max-height: 26px; object-fit: contain; margin-bottom: 3px;" alt="Bre-B" />
+          <div style="flex: 1 1 30%; min-width: 65px; padding: 4px; border-radius: 6px; background: white; border: 1px solid #DDD; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+            <img src="${BASE_URL}payment-logos/breb.jpg" style="display: block; width: auto; max-width: 100%; height: auto; max-height: 26px; object-fit: contain; margin: 0 auto 3px auto;" alt="Bre-B" />
             <div style="font-size: 8.5px; font-weight: 700;">Bre-B</div>
             <div style="font-size: 8px; color: #555; line-height: 1.2;">3107420071</div>
           </div>
-          <div style="flex: 1 1 30%; min-width: 65px; padding: 4px; border-radius: 6px; background: white; border: 1px solid #DDD; text-align: center;">
-            <img src="${BASE_URL}payment-logos/nequi.jpg" style="width: 100%; max-height: 26px; object-fit: contain; margin-bottom: 3px;" alt="Nequi" />
+          <div style="flex: 1 1 30%; min-width: 65px; padding: 4px; border-radius: 6px; background: white; border: 1px solid #DDD; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+            <img src="${BASE_URL}payment-logos/nequi.jpg" style="display: block; width: auto; max-width: 100%; height: auto; max-height: 26px; object-fit: contain; margin: 0 auto 3px auto;" alt="Nequi" />
             <div style="font-size: 8.5px; font-weight: 700;">Nequi</div>
             <div style="font-size: 8px; color: #555; line-height: 1.2;">3107420071</div>
           </div>
@@ -107,12 +107,6 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
 
       <div style="background-color: #FFF4E6; padding: 5mm 6mm 6mm; border-radius: 4px; margin-bottom: 5mm; font-size: 10px; border: 1px solid #F5B7C5;">
         <p style="margin: 0; font-weight: 700; color: #4A2C2A; font-size: 11px;">Válido por 7 días</p>
-      </div>
-
-      <div style="background-color: #FFF4E6; padding: 6mm; border-radius: 5px; border: 1px solid #F5B7C5; margin-bottom: 5mm; font-size: 10px;">
-        <p style="margin: 0 0 4px 0; font-weight: 700; color: #4A2C2A;">Condiciones de pago:</p>
-        <p style="margin: 0 0 4px 0;">50% de anticipo para apartar el pedido y 50% contra entrega, Válido por 7 días 💕🎂🧁.</p>
-        <p style="margin: 0;">Recuerda confirmar 3 días antes: Fecha, hora y lugar de entrega a nuestro WhatsApp: <strong>310 742 0071 o 311 408 7428</strong>.</p>
       </div>
 
       <!-- Footer Message -->
