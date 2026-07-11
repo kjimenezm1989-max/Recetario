@@ -362,10 +362,6 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         </div>
       </div>
 
-      <div style="background-color: #FFF4E6; padding: 5mm 6mm 6mm; border-radius: 4px; margin-bottom: 5mm; font-size: 10px; border: 1px solid #F5B7C5;">
-        <p style="margin: 0; font-weight: 700; color: #4A2C2A; font-size: 11px;">Válido por 7 días</p>
-      </div>
-
       <div style="background-color: #FFF4E6; padding: 6mm; border-radius: 5px; border: 1px solid #F5B7C5; margin-bottom: 5mm; font-size: 10px;">
         <p style="margin: 0 0 4px 0; font-weight: 700; color: #4A2C2A;">Condiciones de pago:</p>
         <p style="margin: 0 0 4px 0;">50% de anticipo para apartar el pedido y 50% contra entrega 💕🎂🧁.</p>
