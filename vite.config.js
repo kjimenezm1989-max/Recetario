@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig(({ command }) => {
   const isBuild = command === 'build'
-  const base = isBuild ? './' : '/'
+  const base = isBuild ? '/Recetario/' : '/'
 
   return {
     base,
