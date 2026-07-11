@@ -91,6 +91,12 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
         </div>
       </div>
 
+      <div style="background-color: #FFF4E6; padding: 6mm; border-radius: 5px; border: 1px solid #F5B7C5; margin-bottom: 5mm; font-size: 10px;">
+        <p style="margin: 0 0 4px 0; font-weight: 700; color: #4A2C2A;">Condiciones de pago:</p>
+        <p style="margin: 0 0 4px 0;">50% de anticipo para apartar el pedido y 50% contra entrega, Válido por 7 días 💕🎂🧁.</p>
+        <p style="margin: 0;">Recuerda confirmar 3 días antes: Fecha, hora y lugar de entrega a nuestro WhatsApp: <strong>310 742 0071 o 311 408 7428</strong>.</p>
+      </div>
+
       <!-- Price Summary -->
       <div style="background: linear-gradient(135deg, #CFE8D5 0%, #B8D9C5 100%); padding: 6mm; border-radius: 3px; margin-bottom: 5mm;">
         <div style="font-size: 14px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
@@ -101,12 +107,6 @@ export const generateQuotePDF = (quote, quoteRecipes = [], config, formatCurrenc
 
       <div style="background-color: #FFF4E6; padding: 5mm 6mm 6mm; border-radius: 4px; margin-bottom: 5mm; font-size: 10px; border: 1px solid #F5B7C5;">
         <p style="margin: 0; font-weight: 700; color: #4A2C2A; font-size: 11px;">Válido por 7 días</p>
-      </div>
-
-      <div style="background-color: #FFF4E6; padding: 6mm; border-radius: 5px; border: 1px solid #F5B7C5; margin-bottom: 5mm; font-size: 10px;">
-        <p style="margin: 0 0 4px 0; font-weight: 700; color: #4A2C2A;">Condiciones de pago:</p>
-        <p style="margin: 0 0 4px 0;">50% de anticipo para apartar el pedido y 50% contra entrega 💕🎂🧁.</p>
-        <p style="margin: 0;">Recuerda confirmar 3 días antes: Fecha, hora y lugar de entrega a nuestro WhatsApp: <strong>310 742 0071 o 311 408 7428</strong>.</p>
       </div>
 
       <!-- Footer Message -->
