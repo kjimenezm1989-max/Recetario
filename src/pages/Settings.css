@@ -159,6 +159,27 @@
   min-width: 200px;
 }
 
+.backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.backup-message {
+  margin: var(--spacing-md) 0 0;
+  color: var(--chocolate);
+}
+
+@media (max-width: 479px) {
+  .backup-actions {
+    flex-direction: column;
+  }
+
+  .backup-actions button {
+    width: 100%;
+  }
+}
+
 .settings-info {
   background: linear-gradient(135deg, var(--beige) 0%, #F5E8DB 100%);
   border-radius: var(--border-radius);

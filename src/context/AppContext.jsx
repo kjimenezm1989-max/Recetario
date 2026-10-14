@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { storage } from '../utils/storage'
+import { chooseAutomaticBackupFile, createBackup, getAutomaticBackupHandle, validateBackup, writeBackupFile } from '../utils/backup'
 import { t } from '../utils/i18n'
 import { applyTheme } from '../utils/themes'
 import { licenseService } from '../utils/license'
@@ -38,6 +39,9 @@ export const AppProvider = ({ children }) => {
   const [configCosts, setConfigCosts] = useState(() => storage.getConfigCosts())
   const [quotes, setQuotes] = useState(() => storage.getQuotes())
   const [licenseStatus, setLicenseStatus] = useState(licenseService.getStatus())
+  const [autoBackupStatus, setAutoBackupStatus] = useState('disabled')
+  const [autoBackupReady, setAutoBackupReady] = useState(false)
+  const backupHandleRef = useRef(null)
 
 
 
@@ -75,6 +79,72 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     storage.setQuotes(quotes)
   }, [quotes])
+
+  useEffect(() => {
+    let active = true
+    const restoreOrEnableBackup = async () => {
+      try {
+        const handle = await getAutomaticBackupHandle()
+        if (!active) return
+        backupHandleRef.current = handle
+        if (!handle) {
+          setAutoBackupReady(true)
+          return
+        }
+
+        const permission = await handle.queryPermission({ mode: 'readwrite' })
+        if (!active) return
+        if (permission !== 'granted') {
+          setAutoBackupStatus('permission')
+          setAutoBackupReady(true)
+          return
+        }
+
+        const file = await handle.getFile()
+        const data = validateBackup(JSON.parse(await file.text()))
+        const localIsEmpty = materials.length === 0 && recipes.length === 0 && recipeMaterials.length === 0 && quotes.length === 0
+        const backupHasData = data.materials.length > 0 || data.recipes.length > 0 || data.recipeMaterials.length > 0 || data.quotes.length > 0
+
+        if (localIsEmpty && backupHasData) {
+          setConfig(data.config)
+          setMaterials(data.materials)
+          setRecipes(data.recipes)
+          setRecipeMaterials(data.recipeMaterials)
+          setConfigCosts(data.configCosts)
+          setQuotes(data.quotes)
+          setAutoBackupStatus('restored')
+        } else {
+          setAutoBackupStatus('active')
+        }
+      } catch (error) {
+        if (active) {
+          backupHandleRef.current = null
+          setAutoBackupStatus('error')
+        }
+      } finally {
+        if (active) setAutoBackupReady(true)
+      }
+    }
+
+    restoreOrEnableBackup()
+    return () => { active = false }
+  }, [])
+
+  useEffect(() => {
+    if (!autoBackupReady || !backupHandleRef.current) return undefined
+
+    const backup = createBackup({ config, materials, recipes, recipeMaterials, configCosts, quotes })
+    const timeout = setTimeout(async () => {
+      try {
+        await writeBackupFile(backupHandleRef.current, backup)
+        setAutoBackupStatus('active')
+      } catch (error) {
+        setAutoBackupStatus('permission')
+      }
+    }, 700)
+
+    return () => clearTimeout(timeout)
+  }, [autoBackupReady, config, materials, recipes, recipeMaterials, configCosts, quotes])
 
   // Translation function
   const translate = (key) => t(key, config.idioma)
@@ -185,6 +255,26 @@ export const AppProvider = ({ children }) => {
     setQuotes(quotes.filter(q => q.id !== id))
   }
 
+  const restoreBackup = (backup) => {
+    const data = validateBackup(backup)
+
+    setConfig(data.config)
+    setMaterials(data.materials)
+    setRecipes(data.recipes)
+    setRecipeMaterials(data.recipeMaterials)
+    setConfigCosts(data.configCosts)
+    setQuotes(data.quotes)
+    return data
+  }
+
+  const enableAutomaticBackup = async () => {
+    const backup = createBackup({ config, materials, recipes, recipeMaterials, configCosts, quotes })
+    const handle = await chooseAutomaticBackupFile(backup)
+    backupHandleRef.current = handle
+    setAutoBackupStatus('active')
+    setAutoBackupReady(true)
+  }
+
   const value = {
     // Config
     config,
@@ -219,6 +309,9 @@ export const AppProvider = ({ children }) => {
     addQuote,
     updateQuote,
     deleteQuote,
+    restoreBackup,
+    enableAutomaticBackup,
+    autoBackupStatus,
 
     // License
     licenseStatus,

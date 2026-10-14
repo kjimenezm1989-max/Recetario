@@ -1,17 +1,20 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useAppContext } from '../context/AppContext'
 import { getCurrencies } from '../utils/currency'
 import { getAllThemes } from '../utils/themes'
 import { LicenseManager } from '../components/LicenseManager'
+import { createBackup } from '../utils/backup'
 import './Settings.css'
 
 export function Settings() {
-  const { translate, config, setConfig, setConfigCosts, configCosts, licenseStatus, activateLicense } = useAppContext()
+  const { translate, config, setConfig, setConfigCosts, configCosts, materials, recipes, recipeMaterials, quotes, restoreBackup, enableAutomaticBackup, autoBackupStatus, licenseStatus, activateLicense } = useAppContext()
 
   const [formData, setFormData] = useState(config)
   const [costData, setCostData] = useState(configCosts)
   const [success, setSuccess] = useState('')
   const [saving, setSaving] = useState(false)
+  const [backupMessage, setBackupMessage] = useState('')
+  const backupInputRef = useRef(null)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -53,6 +56,46 @@ export function Settings() {
       setSuccess('')
       setSaving(false)
     }, 3000)
+  }
+
+  const handleDownloadBackup = () => {
+    const backup = createBackup({ config: formData, materials, recipes, recipeMaterials, configCosts: costData, quotes })
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `recetario-respaldo-${new Date().toISOString().slice(0, 10)}.json`
+    link.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    setBackupMessage('Respaldo descargado. Guárdalo también en otra ubicación segura.')
+  }
+
+  const handleEnableAutomaticBackup = async () => {
+    try {
+      await enableAutomaticBackup()
+      setBackupMessage('Respaldo automático activado. El archivo elegido se actualizará cuando cambien tus datos.')
+    } catch (error) {
+      setBackupMessage(error.message || 'No se pudo activar el respaldo automático.')
+    }
+  }
+
+  const handleRestoreBackup = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    try {
+      const backup = JSON.parse(await file.text())
+      if (!window.confirm('Restaurar este respaldo reemplazará los datos actuales del recetario. ¿Deseas continuar?')) return
+
+      const data = restoreBackup(backup)
+      setFormData(data.config)
+      setCostData(data.configCosts)
+      setBackupMessage('Respaldo restaurado correctamente.')
+    } catch (error) {
+      setBackupMessage(error.message || 'No se pudo leer el archivo de respaldo.')
+    } finally {
+      e.target.value = ''
+    }
   }
 
   const languages = [
@@ -342,6 +385,33 @@ export function Settings() {
         </div>
       </form>
 
+      <div className="settings-section">
+        <h3>Respaldo de datos</h3>
+        <p>El respaldo automático guarda recetas, ingredientes, cotizaciones y configuración en un archivo de tu equipo. Puedes elegir una carpeta sincronizada para tener otra copia. Las imágenes también se incluyen.</p>
+        <div className="backup-actions">
+          <button type="button" className="btn btn-primary" onClick={handleEnableAutomaticBackup}>
+            {autoBackupStatus === 'permission' ? 'Reanudar respaldo automático' : 'Elegir archivo de respaldo automático'}
+          </button>
+          <button type="button" className="btn btn-primary" onClick={handleDownloadBackup}>
+            Descargar respaldo
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={() => backupInputRef.current?.click()}>
+            Restaurar desde archivo
+          </button>
+          <input
+            ref={backupInputRef}
+            type="file"
+            accept=".json,application/json"
+            onChange={handleRestoreBackup}
+            hidden
+          />
+        </div>
+        {autoBackupStatus === 'restored' && <p className="backup-message" role="status">Se recuperaron los datos desde el archivo de respaldo automático.</p>}
+        {autoBackupStatus === 'active' && <p className="backup-message" role="status">Respaldo automático activo.</p>}
+        {autoBackupStatus === 'error' && <p className="backup-message" role="alert">No se pudo leer el archivo automático. No se modificó; elige otro archivo o restaura una copia manual.</p>}
+        {backupMessage && <p className="backup-message" role="status">{backupMessage}</p>}
+      </div>
+
       <div className="settings-info">
         <h3>ℹ️ {translate('information')}</h3>
         <div className="info-box">
@@ -352,7 +422,7 @@ export function Settings() {
             <li>✅ Cálculo automático de precios</li>
             <li>✅ Generación de cotizaciones profesionales</li>
             <li>✅ Disponible sin conexión (PWA)</li>
-            <li>✅ Sincronización automática de datos</li>
+            <li>✅ Guardado automático en este navegador</li>
           </ul>
         </div>
       </div>
