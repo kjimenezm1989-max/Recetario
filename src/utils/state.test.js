@@ -5,7 +5,8 @@ import {
   appendItem,
   updateById,
   removeById,
-  replaceByRecipeId
+  replaceByRecipeId,
+  duplicateRecipeWithIngredients
 } from './state.js'
 
 test('appendItem preserves existing items', () => {
@@ -38,4 +39,25 @@ test('replaceByRecipeId keeps only the latest recipe ingredients', () => {
     { id: 'm2', recipe_id: 'r2', nombre: 'Leche' },
     { id: 'm3', recipe_id: 'r1', nombre: 'Chocolate' }
   ])
+})
+
+test('duplicateRecipeWithIngredients creates a new recipe and ingredient ids without mutating the original', () => {
+  const originalRecipe = { id: 'recipe-1', nombre: 'Torta de chocolate', descripcion: 'Base' }
+  const originalIngredients = [
+    { id: 'ing-1', recipe_id: 'recipe-1', nombre: 'Harina', cantidad: 1 },
+    { id: 'ing-2', recipe_id: 'recipe-1', nombre: 'Chocolate', cantidad: 2 }
+  ]
+
+  const duplicated = duplicateRecipeWithIngredients(originalRecipe, originalIngredients)
+
+  assert.notEqual(duplicated.recipe.id, originalRecipe.id)
+  assert.equal(duplicated.recipe.nombre, 'Torta de chocolate (copia)')
+  assert.equal(duplicated.recipe.descripcion, 'Base')
+  assert.equal(duplicated.ingredients.length, 2)
+  assert.notEqual(duplicated.ingredients[0].id, originalIngredients[0].id)
+  assert.notEqual(duplicated.ingredients[1].id, originalIngredients[1].id)
+  assert.equal(duplicated.ingredients[0].recipe_id, duplicated.recipe.id)
+  assert.equal(duplicated.ingredients[1].recipe_id, duplicated.recipe.id)
+  assert.equal(originalRecipe.nombre, 'Torta de chocolate')
+  assert.deepEqual(originalIngredients.map(item => item.recipe_id), ['recipe-1', 'recipe-1'])
 })

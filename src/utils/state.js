@@ -6,6 +6,26 @@ export const createEntityId = (prefix = 'id') => {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
 }
 
+export const duplicateRecipeWithIngredients = (recipe, ingredients = []) => {
+  const newRecipeId = createEntityId('recipe')
+  const recipeCopy = {
+    ...recipe,
+    id: newRecipeId,
+    nombre: `${recipe?.nombre || 'Receta'} (copia)`
+  }
+
+  const ingredientCopies = ingredients.map(({ id: _oldId, recipe_id: _oldRecipeId, ...ingredient }) => ({
+    ...ingredient,
+    id: createEntityId('recipe-material'),
+    recipe_id: newRecipeId
+  }))
+
+  return {
+    recipe: recipeCopy,
+    ingredients: ingredientCopies
+  }
+}
+
 export const appendItem = (items, item) => [...items, item]
 
 export const updateById = (items, id, updater) =>

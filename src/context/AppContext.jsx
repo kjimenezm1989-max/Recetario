@@ -189,7 +189,7 @@ export const AppProvider = ({ children }) => {
 
   // Recipe operations
   const addRecipe = (recipe) => {
-    const newRecipe = { ...recipe, id: createEntityId('recipe') }
+    const newRecipe = { ...recipe, id: recipe?.id || createEntityId('recipe') }
     setRecipes(prev => appendItem(prev, newRecipe))
     return newRecipe
   }

@@ -3,6 +3,7 @@ import { useAppContext } from '../context/AppContext'
 import { calculateRecipeCost } from '../utils/calculations'
 import { formatCurrency } from '../utils/currency'
 import { RecipeForm } from '../components/RecipeForm'
+import { duplicateRecipeWithIngredients } from '../utils/state'
 import './Recipes.css'
 
 export function Recipes() {
@@ -74,18 +75,11 @@ export function Recipes() {
       return
     }
 
-    const duplicatedRecipe = addRecipe({
-      ...recipe,
-      nombre: `${recipe.nombre} (copia)`
-    })
-    const duplicatedIngredients = recipeMaterials
-      .filter(ingredient => ingredient.recipe_id === recipe.id)
-      .map(ingredient => ({
-        ...ingredient,
-        recipe_id: duplicatedRecipe.id
-      }))
+    const originalIngredients = recipeMaterials.filter(ingredient => ingredient.recipe_id === recipe.id)
+    const duplicated = duplicateRecipeWithIngredients(recipe, originalIngredients)
+    const duplicatedRecipe = addRecipe(duplicated.recipe)
 
-    replaceRecipeMaterials(duplicatedRecipe.id, duplicatedIngredients)
+    replaceRecipeMaterials(duplicatedRecipe.id, duplicated.ingredients)
 
     setEditingId(duplicatedRecipe.id)
     setShowForm(true)
