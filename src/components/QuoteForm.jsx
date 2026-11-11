@@ -4,10 +4,11 @@ import { createEntityId } from '../utils/state'
 import { formatCurrency } from '../utils/currency'
 import { calculateRecipeCost, calculateFinalPrice } from '../utils/calculations'
 import { calculateIngredientCost } from '../utils/unitConversion'
+import { MaterialForm } from './MaterialForm'
 import './QuoteForm.css'
 
 export function QuoteForm({ quote, onSubmit, onCancel }) {
-  const { translate, config, recipes, materials, configCosts, getRecipeMaterialsByRecipeId, canCreateQuotes, canUploadImages } = useAppContext()
+  const { translate, config, recipes, materials, configCosts, getRecipeMaterialsByRecipeId, canCreateQuotes, canUploadImages, canAddMaterials, addMaterial } = useAppContext()
 
   const [formData, setFormData] = useState(quote ? {
     recipe_ids: quote.recipe_ids || (quote.recipe_id ? [quote.recipe_id] : []),
@@ -36,6 +37,7 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
   const [selectedRecipes, setSelectedRecipes] = useState(quote?.recipe_ids || (quote?.recipe_id ? [quote.recipe_id] : []))
   const [selectedMaterial, setSelectedMaterial] = useState('')
   const [materialQuantity, setMaterialQuantity] = useState('')
+  const [showCreateMaterial, setShowCreateMaterial] = useState(false)
   const [extraMaterials, setExtraMaterials] = useState(quote?.extraMaterials || [])
   const [recipeCost, setRecipeCost] = useState(0)
   const [extraMaterialsCost, setExtraMaterialsCost] = useState(0)
@@ -185,6 +187,13 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
     setFormData(prev => ({ ...prev, extraMaterials: nextList }))
   }
 
+  const handleCreateMaterialSubmit = (materialData) => {
+    const savedMaterial = addMaterial(materialData)
+    setSelectedMaterial(savedMaterial.id)
+    setMaterialQuantity('1')
+    setShowCreateMaterial(false)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
 
@@ -332,7 +341,26 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
             <button type="button" className="btn btn-secondary" onClick={handleAddMaterial}>
               Agregar material
             </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setShowCreateMaterial(prev => !prev)}
+              disabled={!canAddMaterials()}
+            >
+              {showCreateMaterial ? 'Cerrar' : 'Crear material'}
+            </button>
           </div>
+
+          {showCreateMaterial && (
+            <div className="quote-material-form-wrapper">
+              <MaterialForm
+                embedded
+                onSubmit={handleCreateMaterialSubmit}
+                onCancel={() => setShowCreateMaterial(false)}
+              />
+            </div>
+          )}
+
           {errors.extraMaterials && <span className="error-message">{errors.extraMaterials}</span>}
           {extraMaterials.length > 0 && (
             <div className="materials-table">
