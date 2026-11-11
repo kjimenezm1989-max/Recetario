@@ -81,6 +81,31 @@ export function Recipes() {
     setShowForm(true)
   }
 
+  const handleDuplicateClick = (recipe) => {
+    if (!canAddRecipes()) {
+      alert('Límite de 2 recetas alcanzado. Requiere licencia de pago.')
+      return
+    }
+
+    const duplicatedRecipe = addRecipe({
+      ...recipe,
+      nombre: `${recipe.nombre} (copia)`
+    })
+    const duplicatedIngredients = recipeMaterials
+      .filter(ingredient => ingredient.recipe_id === recipe.id)
+      .map(ingredient => ({
+        ...ingredient,
+        recipe_id: duplicatedRecipe.id
+      }))
+
+    if (duplicatedIngredients.length > 0) {
+      addMultipleRecipeMaterials(duplicatedIngredients)
+    }
+
+    setEditingId(duplicatedRecipe.id)
+    setShowForm(true)
+  }
+
   const handleDeleteClick = (id) => {
     if (confirm(translate('confirm'))) {
       deleteRecipe(id)
@@ -202,6 +227,14 @@ export function Recipes() {
                     title="Clickea para editar esta receta"
                   >
                     {translate('edit')}
+                  </button>
+                  <button
+                    className="btn btn-small btn-secondary"
+                    onClick={() => handleDuplicateClick(recipe)}
+                    disabled={!canAddRecipes()}
+                    title={translate('duplicateRecipe')}
+                  >
+                    {translate('duplicateRecipe')}
                   </button>
                   <button
                     className="btn btn-small btn-danger"

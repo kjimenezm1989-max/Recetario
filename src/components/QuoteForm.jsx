@@ -53,6 +53,10 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
     .map(id => recipes.find(r => r.id === id))
     .filter(Boolean)
 
+  const sortedMaterials = [...materials].sort((a, b) =>
+    a.nombre.localeCompare(b.nombre, config.idioma || 'es', { sensitivity: 'base' })
+  )
+
   const calculateSelectedRecipeCost = () => {
     return selectedRecipeItems.reduce((total, recipe) => {
       const recipeItems = getRecipeMaterialsByRecipeId(recipe.id)
@@ -305,7 +309,7 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
               className={errors.extraMaterials ? 'input-error' : ''}
             >
               <option value="">Selecciona un material</option>
-              {materials.map(material => (
+              {sortedMaterials.map(material => (
                 <option key={material.id} value={material.id}>
                   {material.nombre} - {formatCurrency(material.precio, config.moneda)} / {material.cantidad_presentacion}{material.presentacion}
                 </option>

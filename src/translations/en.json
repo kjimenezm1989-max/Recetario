@@ -48,6 +48,7 @@
   "createRecipe": "Create Recipe",
   "editRecipe": "Edit Recipe",
   "deleteRecipe": "Delete Recipe",
+  "duplicateRecipe": "Duplicate recipe",
   "recipes_list": "Recipes List",
   "addIngredient": "Add Ingredient",
   "removeIngredient": "Remove Ingredient",

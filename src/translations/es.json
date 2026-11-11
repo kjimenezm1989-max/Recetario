@@ -48,6 +48,7 @@
   "createRecipe": "Crear Receta",
   "editRecipe": "Editar Receta",
   "deleteRecipe": "Eliminar Receta",
+  "duplicateRecipe": "Duplicar receta",
   "recipes_list": "Lista de Recetas",
   "addIngredient": "Agregar Ingrediente",
   "removeIngredient": "Eliminar Ingrediente",

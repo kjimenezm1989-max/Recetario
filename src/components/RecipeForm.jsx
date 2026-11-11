@@ -4,10 +4,11 @@ import { validateRecipe, calculateRecipeCost, getIngredientsWithCosts } from '..
 import { formatCurrency } from '../utils/currency'
 import { PRESENTACIONES } from '../utils/presentaciones'
 import { calculateIngredientCost, calculateQuantityFraction } from '../utils/unitConversion'
+import { MaterialForm } from './MaterialForm'
 import './RecipeForm.css'
 
 export function RecipeForm({ recipe, onSubmit, onCancel }) {
-  const { translate, config, materials, recipeMaterials, getRecipeMaterialsByRecipeId, addRecipeMaterial, deleteRecipeMaterial, canAddRecipes, canUploadImages } = useAppContext()
+  const { translate, config, materials, recipeMaterials, getRecipeMaterialsByRecipeId, addRecipeMaterial, addMaterial, canAddRecipes, canAddMaterials, canUploadImages } = useAppContext()
 
   const [formData, setFormData] = useState(recipe || {
     nombre: '',
@@ -23,6 +24,7 @@ export function RecipeForm({ recipe, onSubmit, onCancel }) {
   const [imageUrl, setImageUrl] = useState('')
   const [giftImageMode, setGiftImageMode] = useState('file')
   const [giftImageUrl, setGiftImageUrl] = useState('')
+  const [showMaterialForm, setShowMaterialForm] = useState(false)
   const [errors, setErrors] = useState({})
   const [totalCost, setTotalCost] = useState(0)
 
@@ -177,10 +179,13 @@ export function RecipeForm({ recipe, onSubmit, onCancel }) {
   }
 
   const handleRemoveIngredient = (id) => {
-    if (recipe) {
-      deleteRecipeMaterial(id)
-    }
     setIngredients(ingredients.filter(ing => ing.id !== id))
+  }
+
+  const handleQuickAddMaterial = (materialData) => {
+    const savedMaterial = addMaterial(materialData)
+    setNewIngredient(prev => ({ ...prev, material_id: savedMaterial.id }))
+    setShowMaterialForm(false)
   }
 
   const handleSubmit = (e) => {
@@ -445,6 +450,28 @@ export function RecipeForm({ recipe, onSubmit, onCancel }) {
               {translate('addIngredient')}
             </button>
           </div>
+
+          <div className="quick-material-action">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setShowMaterialForm(prev => !prev)}
+              disabled={!canAddMaterials()}
+              title={translate('createMaterial')}
+            >
+              + {translate('createMaterial')}
+            </button>
+          </div>
+
+          {showMaterialForm && (
+            <div className="quick-material-form">
+              <MaterialForm
+                embedded
+                onSubmit={handleQuickAddMaterial}
+                onCancel={() => setShowMaterialForm(false)}
+              />
+            </div>
+          )}
 
           {ingredients.length === 0 && (
             <div className="empty-ingredients">

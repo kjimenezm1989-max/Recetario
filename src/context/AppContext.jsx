@@ -200,7 +200,7 @@ export const AppProvider = ({ children }) => {
   }
 
   const deleteRecipeMaterial = (id) => {
-    setRecipeMaterials(recipeMaterials.filter(rm => rm.id !== id))
+    setRecipeMaterials(prev => prev.filter(rm => rm.id !== id))
   }
 
   const getRecipeMaterialsByRecipeId = (recipeId) => {

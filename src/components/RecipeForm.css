@@ -225,6 +225,22 @@
   align-items: end;
 }
 
+.quick-material-action {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: var(--spacing-lg);
+}
+
+.quick-material-form {
+  margin-bottom: var(--spacing-lg);
+}
+
+.quick-material-form .material-form {
+  background: var(--gris-claro);
+  box-shadow: none;
+  border: 1px solid var(--beige);
+}
+
 .form-select,
 .form-input {
   padding: var(--spacing-md);

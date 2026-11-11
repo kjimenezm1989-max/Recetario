@@ -5,7 +5,7 @@ import { formatCurrency } from '../utils/currency'
 import { PRESENTACIONES } from '../utils/presentaciones'
 import './MaterialForm.css'
 
-export function MaterialForm({ material, onSubmit, onCancel }) {
+export function MaterialForm({ material, onSubmit, onCancel, embedded = false }) {
   const { translate, config, canAddMaterials, canUploadImages } = useAppContext()
   const [formData, setFormData] = useState(material || {
     nombre: '',
@@ -99,11 +99,23 @@ export function MaterialForm({ material, onSubmit, onCancel }) {
     })
   }
 
+  const handleEmbeddedKeyDown = (e) => {
+    if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
+      e.preventDefault()
+      handleSubmit(e)
+    }
+  }
+
+  const FormElement = embedded ? 'div' : 'form'
+
   return (
     <div className="material-form">
       <h3>{material ? translate('editMaterial') : translate('createMaterial')}</h3>
       
-      <form onSubmit={handleSubmit}>
+      <FormElement
+        onSubmit={embedded ? undefined : handleSubmit}
+        onKeyDown={embedded ? handleEmbeddedKeyDown : undefined}
+      >
         <div className="form-grid">
           <div className="input-group">
             <label htmlFor="nombre">{translate('materialName')} *</label>
@@ -240,11 +252,15 @@ export function MaterialForm({ material, onSubmit, onCancel }) {
           <button type="button" className="btn btn-secondary" onClick={onCancel}>
             {translate('cancel')}
           </button>
-          <button type="submit" className="btn btn-primary">
+          <button
+            type={embedded ? 'button' : 'submit'}
+            className="btn btn-primary"
+            onClick={embedded ? handleSubmit : undefined}
+          >
             {translate('save')}
           </button>
         </div>
-      </form>
+      </FormElement>
     </div>
   )
 }
