@@ -69,6 +69,9 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
     return extraMaterials.reduce((total, material) => total + (parseFloat(material.costo) || 0), 0)
   }
 
+  const sortExtraMaterials = (items = []) =>
+    [...items].sort((a, b) => (a.nombre || '').localeCompare(b.nombre || '', undefined, { sensitivity: 'base' }))
+
   useEffect(() => {
     const cost = calculateSelectedRecipeCost()
     const extras = calculateExtraMaterialsTotal()
@@ -168,16 +171,18 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
       costo: Math.round(cost * 100) / 100
     }
 
-    setExtraMaterials(prev => [...prev, newMaterial])
-    setFormData(prev => ({ ...prev, extraMaterials: [...prev.extraMaterials, newMaterial] }))
+    const nextList = sortExtraMaterials([...extraMaterials, newMaterial])
+    setExtraMaterials(nextList)
+    setFormData(prev => ({ ...prev, extraMaterials: nextList }))
     setSelectedMaterial('')
     setMaterialQuantity('')
     setErrors(prev => ({ ...prev, extraMaterials: '' }))
   }
 
   const handleRemoveExtraMaterial = (id) => {
-    setExtraMaterials(prev => prev.filter(item => item.id !== id))
-    setFormData(prev => ({ ...prev, extraMaterials: prev.extraMaterials.filter(item => item.id !== id) }))
+    const nextList = extraMaterials.filter(item => item.id !== id)
+    setExtraMaterials(nextList)
+    setFormData(prev => ({ ...prev, extraMaterials: nextList }))
   }
 
   const handleSubmit = (e) => {
@@ -337,7 +342,7 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
                 <span>Costo</span>
                 <span>Acción</span>
               </div>
-              {extraMaterials.map(item => (
+              {sortExtraMaterials(extraMaterials).map(item => (
                 <div key={item.id} className="materials-row">
                   <span>{item.nombre}</span>
                   <span>{item.cantidad} {item.unidad}</span>
