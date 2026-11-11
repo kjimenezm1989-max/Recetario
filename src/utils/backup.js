@@ -1,6 +1,7 @@
 const DATABASE_NAME = 'recetario-backup-settings'
 const STORE_NAME = 'handles'
 const HANDLE_KEY = 'automatic-backup-file'
+const LOCAL_BACKUP_KEY = 'recetario-local-backup'
 
 export const createBackup = (data) => ({
   format: 'recetario-backup',
@@ -8,6 +9,28 @@ export const createBackup = (data) => ({
   exportedAt: new Date().toISOString(),
   data
 })
+
+export const saveLocalBackup = (data) => {
+  try {
+    const backup = createBackup(data)
+    localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(backup))
+    return backup
+  } catch (error) {
+    console.warn('No se pudo guardar el respaldo local', error)
+    return null
+  }
+}
+
+export const getLocalBackup = () => {
+  try {
+    const raw = localStorage.getItem(LOCAL_BACKUP_KEY)
+    if (!raw) return null
+    return validateBackup(JSON.parse(raw))
+  } catch (error) {
+    console.warn('No se pudo leer el respaldo local', error)
+    return null
+  }
+}
 
 export const validateBackup = (backup) => {
   const data = backup?.data

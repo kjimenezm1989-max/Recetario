@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAppContext } from '../context/AppContext'
+import { createEntityId } from '../utils/state'
 import { validateRecipe, calculateRecipeCost, getIngredientsWithCosts } from '../utils/calculations'
 import { formatCurrency } from '../utils/currency'
 import { PRESENTACIONES } from '../utils/presentaciones'
@@ -165,8 +166,8 @@ export function RecipeForm({ recipe, onSubmit, onCancel }) {
     console.log('📊 Fracción de presentación:', quantityFraction)
 
     const newRecipeIngredient = {
-      id: Date.now().toString(),
-      recipe_id: recipe?.id || Date.now().toString(),
+      id: createEntityId('recipe-material'),
+      recipe_id: recipe?.id || createEntityId('recipe'),
       material_id: newIngredient.material_id,
       cantidad: quantityFraction,  // Fracción de presentación para cálculos
       cantidad_valor: cantidadValor,

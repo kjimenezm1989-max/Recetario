@@ -1,3 +1,5 @@
+import { createEntityId } from './state'
+
 const STORAGE_KEYS = {
   APP_CONFIG: 'app_config',
   MATERIALS: 'materials',
@@ -35,7 +37,7 @@ export const storage = {
   },
   addMaterial: (material) => {
     const materials = storage.getMaterials()
-    const newMaterial = { ...material, id: Date.now().toString() }
+    const newMaterial = { ...material, id: createEntityId('material') }
     storage.setMaterials([...materials, newMaterial])
     return newMaterial
   },
@@ -62,7 +64,7 @@ export const storage = {
   },
   addRecipe: (recipe) => {
     const recipes = storage.getRecipes()
-    const newRecipe = { ...recipe, id: Date.now().toString() }
+    const newRecipe = { ...recipe, id: createEntityId('recipe') }
     storage.setRecipes([...recipes, newRecipe])
     return newRecipe
   },
@@ -89,7 +91,7 @@ export const storage = {
   },
   addRecipeMaterial: (recipeMaterial) => {
     const materials = storage.getRecipeMaterials()
-    const newRecipeMaterial = { ...recipeMaterial, id: Date.now().toString() }
+    const newRecipeMaterial = { ...recipeMaterial, id: createEntityId('recipe-material') }
     storage.setRecipeMaterials([...materials, newRecipeMaterial])
     return newRecipeMaterial
   },
@@ -121,7 +123,7 @@ export const storage = {
   },
   addQuote: (quote) => {
     const quotes = storage.getQuotes()
-    const newQuote = { ...quote, id: Date.now().toString(), fecha: new Date().toISOString() }
+    const newQuote = { ...quote, id: createEntityId('quote'), fecha: new Date().toISOString() }
     storage.setQuotes([...quotes, newQuote])
     return newQuote
   },

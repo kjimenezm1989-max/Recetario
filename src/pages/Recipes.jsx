@@ -6,7 +6,7 @@ import { RecipeForm } from '../components/RecipeForm'
 import './Recipes.css'
 
 export function Recipes() {
-  const { translate, config, recipes, recipeMaterials, materials, addRecipe, updateRecipe, deleteRecipe, addMultipleRecipeMaterials, deleteRecipeMaterial, canAddRecipes, refreshRecipeCosts } = useAppContext()
+  const { translate, config, recipes, recipeMaterials, materials, addRecipe, updateRecipe, deleteRecipe, addMultipleRecipeMaterials, replaceRecipeMaterials, canAddRecipes, refreshRecipeCosts } = useAppContext()
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -58,21 +58,8 @@ export function Recipes() {
     // Actualizar la receta
     updateRecipe(editingId, recipeInfo)
     
-    // Eliminar ingredientes antiguos
-    const oldIngredients = recipeMaterials.filter(rm => rm.recipe_id === editingId)
-    oldIngredients.forEach(ing => {
-      deleteRecipeMaterial(ing.id)
-    })
-    
-    // Guardar los nuevos ingredientes
-    if (ingredientes && ingredientes.length > 0) {
-      const ingredientesConRecipeId = ingredientes.map(ing => ({
-        ...ing,
-        recipe_id: editingId
-      }))
-      addMultipleRecipeMaterials(ingredientesConRecipeId)
-    }
-    
+    replaceRecipeMaterials(editingId, ingredientes || [])
+    setShowForm(false)
     setEditingId(null)
   }
 
@@ -98,9 +85,7 @@ export function Recipes() {
         recipe_id: duplicatedRecipe.id
       }))
 
-    if (duplicatedIngredients.length > 0) {
-      addMultipleRecipeMaterials(duplicatedIngredients)
-    }
+    replaceRecipeMaterials(duplicatedRecipe.id, duplicatedIngredients)
 
     setEditingId(duplicatedRecipe.id)
     setShowForm(true)

@@ -1,10 +1,17 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { storage } from '../utils/storage'
-import { chooseAutomaticBackupFile, createBackup, getAutomaticBackupHandle, validateBackup, writeBackupFile } from '../utils/backup'
+import { chooseAutomaticBackupFile, createBackup, getAutomaticBackupHandle, getLocalBackup, saveLocalBackup, validateBackup, writeBackupFile } from '../utils/backup'
 import { t } from '../utils/i18n'
 import { applyTheme } from '../utils/themes'
 import { licenseService } from '../utils/license'
 import { calculateIngredientCost } from '../utils/unitConversion'
+import {
+  appendItem,
+  updateById,
+  removeById,
+  replaceByRecipeId,
+  createEntityId
+} from '../utils/state'
 
 const AppContext = createContext()
 
@@ -80,6 +87,11 @@ export const AppProvider = ({ children }) => {
     storage.setQuotes(quotes)
   }, [quotes])
 
+  // Always keep a local backup snapshot to recover data after browser resets or accidental deletion
+  useEffect(() => {
+    saveLocalBackup({ config, materials, recipes, recipeMaterials, configCosts, quotes })
+  }, [config, materials, recipes, recipeMaterials, configCosts, quotes])
+
   useEffect(() => {
     let active = true
     const restoreOrEnableBackup = async () => {
@@ -102,10 +114,20 @@ export const AppProvider = ({ children }) => {
 
         const file = await handle.getFile()
         const data = validateBackup(JSON.parse(await file.text()))
+        const localBackup = getLocalBackup()
         const localIsEmpty = materials.length === 0 && recipes.length === 0 && recipeMaterials.length === 0 && quotes.length === 0
+        const localBackupHasData = localBackup && (localBackup.materials.length > 0 || localBackup.recipes.length > 0 || localBackup.recipeMaterials.length > 0 || localBackup.quotes.length > 0)
         const backupHasData = data.materials.length > 0 || data.recipes.length > 0 || data.recipeMaterials.length > 0 || data.quotes.length > 0
 
-        if (localIsEmpty && backupHasData) {
+        if (localIsEmpty && localBackupHasData) {
+          setConfig(localBackup.config)
+          setMaterials(localBackup.materials)
+          setRecipes(localBackup.recipes)
+          setRecipeMaterials(localBackup.recipeMaterials)
+          setConfigCosts(localBackup.configCosts)
+          setQuotes(localBackup.quotes)
+          setAutoBackupStatus('restored')
+        } else if (localIsEmpty && backupHasData) {
           setConfig(data.config)
           setMaterials(data.materials)
           setRecipes(data.recipes)
@@ -151,51 +173,59 @@ export const AppProvider = ({ children }) => {
 
   // Material operations
   const addMaterial = (material) => {
-    const newMaterial = { ...material, id: Date.now().toString() }
-    setMaterials([...materials, newMaterial])
+    const newMaterial = { ...material, id: createEntityId('material') }
+    setMaterials(prev => appendItem(prev, newMaterial))
     return newMaterial
   }
 
   const updateMaterial = (id, material) => {
-    setMaterials(materials.map(m => m.id === id ? { ...m, ...material } : m))
+    setMaterials(prev => updateById(prev, id, item => ({ ...item, ...material })))
   }
 
   const deleteMaterial = (id) => {
-    setMaterials(materials.filter(m => m.id !== id))
-    // Also delete recipe materials that use this material
-    setRecipeMaterials(recipeMaterials.filter(rm => rm.material_id !== id))
+    setMaterials(prev => removeById(prev, id))
+    setRecipeMaterials(prev => prev.filter(rm => rm.material_id !== id))
   }
 
   // Recipe operations
   const addRecipe = (recipe) => {
-    const newRecipe = { ...recipe, id: Date.now().toString() }
-    setRecipes([...recipes, newRecipe])
+    const newRecipe = { ...recipe, id: createEntityId('recipe') }
+    setRecipes(prev => appendItem(prev, newRecipe))
     return newRecipe
   }
 
   const updateRecipe = (id, recipe) => {
-    setRecipes(recipes.map(r => r.id === id ? { ...r, ...recipe } : r))
+    setRecipes(prev => updateById(prev, id, item => ({ ...item, ...recipe })))
   }
 
   const deleteRecipe = (id) => {
-    setRecipes(recipes.filter(r => r.id !== id))
-    // Also delete recipe materials for this recipe
-    setRecipeMaterials(recipeMaterials.filter(rm => rm.recipe_id !== id))
+    setRecipes(prev => removeById(prev, id))
+    setRecipeMaterials(prev => prev.filter(rm => rm.recipe_id !== id))
   }
 
   // Recipe Material operations
   const addRecipeMaterial = (recipeMaterial) => {
-    const newRecipeMaterial = { ...recipeMaterial, id: Date.now().toString() }
-    setRecipeMaterials([...recipeMaterials, newRecipeMaterial])
+    const newRecipeMaterial = { ...recipeMaterial, id: createEntityId('recipe-material') }
+    setRecipeMaterials(prev => appendItem(prev, newRecipeMaterial))
     return newRecipeMaterial
   }
 
   const addMultipleRecipeMaterials = (recipeMaterials) => {
     const newRecipeMaterials = recipeMaterials.map(rm => ({
       ...rm,
-      id: Date.now().toString() + Math.random()
+      id: createEntityId('recipe-material')
     }))
     setRecipeMaterials(prev => [...prev, ...newRecipeMaterials])
+    return newRecipeMaterials
+  }
+
+  const replaceRecipeMaterials = (recipeId, recipeMaterials) => {
+    const newRecipeMaterials = recipeMaterials.map(rm => ({
+      ...rm,
+      id: createEntityId('recipe-material'),
+      recipe_id: recipeId
+    }))
+    setRecipeMaterials(prev => replaceByRecipeId(prev, recipeId, newRecipeMaterials))
     return newRecipeMaterials
   }
 
@@ -240,19 +270,19 @@ export const AppProvider = ({ children }) => {
   const addQuote = (quote) => {
     const newQuote = { 
       ...quote, 
-      id: Date.now().toString(), 
+      id: createEntityId('quote'), 
       fecha: new Date().toISOString() 
     }
-    setQuotes([...quotes, newQuote])
+    setQuotes(prev => appendItem(prev, newQuote))
     return newQuote
   }
 
   const updateQuote = (id, quote) => {
-    setQuotes(quotes.map(q => q.id === id ? { ...q, ...quote } : q))
+    setQuotes(prev => updateById(prev, id, item => ({ ...item, ...quote })))
   }
 
   const deleteQuote = (id) => {
-    setQuotes(quotes.filter(q => q.id !== id))
+    setQuotes(prev => removeById(prev, id))
   }
 
   const restoreBackup = (backup) => {
@@ -297,6 +327,7 @@ export const AppProvider = ({ children }) => {
     recipeMaterials,
     addRecipeMaterial,
     addMultipleRecipeMaterials,
+    replaceRecipeMaterials,
     deleteRecipeMaterial,
     getRecipeMaterialsByRecipeId,
 

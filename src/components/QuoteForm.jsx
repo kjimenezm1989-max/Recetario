@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAppContext } from '../context/AppContext'
+import { createEntityId } from '../utils/state'
 import { formatCurrency } from '../utils/currency'
 import { calculateRecipeCost, calculateFinalPrice } from '../utils/calculations'
 import { calculateIngredientCost } from '../utils/unitConversion'
@@ -159,7 +160,7 @@ export function QuoteForm({ quote, onSubmit, onCancel }) {
     )
 
     const newMaterial = {
-      id: Date.now().toString(),
+      id: createEntityId('extra-material'),
       material_id: material.id,
       nombre: material.nombre,
       cantidad: quantity,
